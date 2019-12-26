@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="XamarinLearnins.ColorPickerView"
+             x:Name="colorPickerContentView">
+    <ContentView.Content>
+        <StackLayout>
+            <Label x:Name="Label" />
+            <StackLayout Orientation="Horizontal">
+                <Grid ColumnSpacing="8" HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80*" />
+                        <ColumnDefinition Width="20*" />
+                    </Grid.ColumnDefinitions>
+                    <BoxView Grid.Column="0" x:Name="ColorBlendBox" HorizontalOptions="FillAndExpand"/>
+                    <Button Grid.Column="1" Text="X" 
+                            HorizontalOptions="FillAndExpand"
+                            BackgroundColor="Red" 
+                            TextColor="Black" 
+                            Clicked="btnDeleteColorPicker_Clicked" />
+                </Grid>
+
+            </StackLayout>
+            <Slider x:Name="Slider_Red"
+                Value="{Binding 'Red'}"
+                ThumbColor="Red"
+                Minimum="0"
+                Maximum="255"
+                WidthRequest="300"
+                ValueChanged="Slider_ValueChanged" />
+
+            <Slider x:Name="Slider_Green"
+                Value="{Binding 'Green'}"
+                ThumbColor="Green"
+                Minimum="0"
+                Maximum="255"
+                WidthRequest="300"
+                ValueChanged="Slider_ValueChanged" />
+
+        <Slider x:Name="Slider_Blue"
+                Value="{Binding 'Blue'}"
+                ThumbColor="Blue"
+                Minimum="0"
+                Maximum="255"
+                WidthRequest="300"
+                ValueChanged="Slider_ValueChanged" />
+      </StackLayout>
+    </ContentView.Content>
+</ContentView>
