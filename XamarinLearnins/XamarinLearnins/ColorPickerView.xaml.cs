@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using static XamarinLearnins.MainPage;
+using static XamarinLearnins.NavigationPage;
 
 namespace XamarinLearnins
 {

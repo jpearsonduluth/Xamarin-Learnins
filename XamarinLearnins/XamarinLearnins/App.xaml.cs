@@ -10,7 +10,7 @@ namespace XamarinLearnins
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new NavigationPage();
         }
 
         protected override void OnStart()

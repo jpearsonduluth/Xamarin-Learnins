@@ -1,60 +1,76 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace XamarinLearnins
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainPage : ContentPage
     {
         public MainPage()
         {
             InitializeComponent();
 
-            var items = DataPersistance.Get();
-
-            foreach (var item in items)
+            MessagingCenter.Subscribe<NavigationPage>(this, Constants.APPREADY, (sender) =>
             {
-                ColorPickerView view = new ColorPickerView() { BindingContext = item };
-                ClashColors.Children.Add(view);
+                var configs = DataPersistance.Get();
+                txtNewConfig.IsVisible = !configs.Any();
+                populateConfigDropdown(configs);
+                setUpConfig(configs.FirstOrDefault() ?? new Config());
+            });            
+        }
+        public string GetConfigName()
+        {
+            if (txtNewConfig.IsVisible)
+                return txtNewConfig.Text;
+            else
+                return configPicker.SelectedItem.ToString();
+        }
+        public ColorModel GetBladeColor()
+        {
+            return primaryColor.getColorModel();
+        }
+        private void populateConfigDropdown(IEnumerable<Config> configs)
+        {
+            configPicker.Items.Add("New");
+            foreach (var config in configs)
+            {
+                configPicker.Items.Add(config.Name);
             }
 
-            btnAddClashColor.IsVisible = canAddClashColor();
+            if (configs.Any())
+                configPicker.SelectedIndex = 1;
         }
 
-        private void btnSave_Clicked(object sender, EventArgs e)
+        private void setUpConfig(Config config)
         {
-            DataPersistance.Save(getClashColors());
+            primaryColor.BindingContext = config.BladeColor;
+            fireConfigMsg(config);
         }
-
-        private void btnAddClashColor_Clicked(object sender, EventArgs e)
-        {
-            var model = new ColorModel { Red = 75, Blue = 150, Green = 225 };
-            ColorPickerView view = new ColorPickerView() { BindingContext = model };
-            ClashColors.Children.Add(view);
-            
-            if (!canAddClashColor())
-                btnAddClashColor.IsVisible = false;
+        private void fireConfigMsg(Config config)
+        { 
+            MessagingCenter.Send(this, Constants.CONFIGCHANGE, config);
         }
-        private bool canAddClashColor()
+        private void configPicker_SelectedIndexChanged(object sender, EventArgs e)
         {
-            return getClashColors().Count() < 3;
-        }
-
-        private IEnumerable<ColorModel> getClashColors()
-        {
-            return ClashColors.Children?.Select(x => ((ColorPickerView)x).getColorModel());
-        }
-
-        private void ClashColors_ChildRemoved(object sender, ElementEventArgs e)
-        {
-            btnAddClashColor.IsVisible = canAddClashColor();
+            var picker = ((Picker)sender);
+            Config config;
+            if (picker.SelectedIndex != 0)
+            {
+                txtNewConfig.IsVisible = false;
+                config = DataPersistance.Get().FirstOrDefault(x => x.Name == picker.SelectedItem.ToString());                
+            }
+            else
+            {
+                txtNewConfig.IsVisible = true;
+                config = new Config();
+            }
+            setUpConfig(config);
         }
     }
-    
 }

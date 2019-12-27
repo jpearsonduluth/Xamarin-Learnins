@@ -5,11 +5,12 @@ namespace XamarinLearnins
 {
     public class Config
     {
+        public string Name { get; set; }
         public ColorModel BladeColor { get; set; }
-        public List<ColorModel> ClashColors { get; set; }
+        public IEnumerable<ColorModel> ClashColors { get; set; }
         public Sound HumSound { get; set; }
-        public List<Sound> SwingSounds { get; set; }
-        public List<Sound> ClashSounds { get; set; }
+        public IEnumerable<Sound> SwingSounds { get; set; }
+        public IEnumerable<Sound> ClashSounds { get; set; }
     }
 
     public class ColorModel

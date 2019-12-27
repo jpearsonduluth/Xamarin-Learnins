@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
@@ -8,30 +9,38 @@ namespace XamarinLearnins
     public class DataPersistance
     {
         private static IDictionary<string, object> props { get { return Application.Current.Properties;  } }
-        private const string KEY = "config_data";
 
-        public static IEnumerable<ColorModel>Get()
+        public static IEnumerable<Config> Get()
         {
-            return JsonConvert.DeserializeObject<IEnumerable<ColorModel>>(getJson()) ?? Enumerable.Empty<ColorModel>();
+            var configs = new List<Config>();
+            var keys = props.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                try
+                {
+                    configs.Add(JsonConvert.DeserializeObject<Config>(props[key].ToString()));
+                }
+                catch (Exception e)
+                {
+                    //the data is corupt/invalid
+                    props.Remove(key);
+                }
+            }
+            return  configs;
         }
-        public static void Save(IEnumerable<ColorModel> colorModels)
+        public static void Save(Config config)
         {
-            saveJson(JsonConvert.SerializeObject(colorModels));
+            saveJson(config.Name, JsonConvert.SerializeObject(config));
         }
 
-        private static string getJson()
+        private static void saveJson(string key, string json)
         {
-            if (!props?.ContainsKey(KEY) ?? true)
-                return string.Empty;
-
-            return props[KEY].ToString();
-        }
-        private static void saveJson(string json)
-        {
-            if (!props?.ContainsKey(KEY) ?? true)
-                props.Add(KEY, json);
+            if (!props?.ContainsKey(key) ?? true)
+                props.Add(key, json);
             else
-                props[KEY] = json;
+                props[key] = json;
+
+            Application.Current.SavePropertiesAsync();
         }
     }
 }
